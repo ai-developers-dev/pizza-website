@@ -83,13 +83,13 @@ const ParallaxHero: React.FC = () => {
 
         // Use Math.min to ensure the pizza is always fully visible
         // marginFactor adds the requested small margins on the sides
-        const marginFactor = isMobile ? 0.92 : 0.88;
+        const marginFactor = isMobile ? 1.15 : 0.88;
         const scale = Math.min(widthRatio, heightRatio) * marginFactor;
 
         const destWidth = img.naturalWidth * scale;
         const destHeight = img.naturalHeight * scale;
         const destX = (canvas.width / 2) - (destWidth / 2);
-        const destY = (canvas.height / 2) - (destHeight / 2) + (isMobile ? 20 : 40);
+        const destY = (canvas.height / 2) - (destHeight / 2) + (isMobile ? 60 : 40);
 
         context.drawImage(
           img,

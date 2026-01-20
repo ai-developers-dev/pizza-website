@@ -8,7 +8,8 @@ const Header: React.FC = () => {
 
     useEffect(() => {
         const handleScroll = () => {
-            setIsScrolled(window.scrollY > 50);
+            const threshold = window.innerHeight * 3;
+            setIsScrolled(window.scrollY > threshold);
         };
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
