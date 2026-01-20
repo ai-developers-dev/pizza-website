@@ -6,7 +6,7 @@
   --color-dark: #121212;
   --color-light: #f8f9fa;
   --color-accent: #f1faee;
-  
+
   --font-heading: "Outfit", sans-serif;
   --font-body: "Inter", sans-serif;
 }
@@ -24,7 +24,12 @@ body {
   overflow-x: hidden;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--font-heading);
   font-weight: 700;
   letter-spacing: -0.02em;
@@ -48,3 +53,19 @@ h1, h2, h3, h4, h5, h6 {
   background: #d0d0d0;
 }
 
+
+@layer utilities {
+  .animate-spin-slow {
+    animation: spin 3s linear infinite;
+  }
+
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+
+    to {
+      transform: rotate(360deg);
+    }
+  }
+}
