@@ -112,22 +112,16 @@ const ParallaxHero: React.FC = () => {
 
         // Dynamic boost based on viewport width - MAXIMUM IMPACT
         let boostFactor = 2.5; // Maximum impact for desktop
-        let allowOverflow = false;
         if (canvasWidth < 480) {
           boostFactor = 4.5; // Massive for small phones
-          allowOverflow = true; // Let pizza bleed off edges
         } else if (canvasWidth < 768) {
           boostFactor = 4.0; // Very large for mobile
-          allowOverflow = true;
         } else if (canvasWidth < 1024) {
           boostFactor = 3.2; // Large for tablet
         }
 
-        // Use height-based scale with boost
-        // On mobile, allow overflow past width for bigger impact
-        let scale = allowOverflow
-          ? heightFitScale * boostFactor
-          : Math.min(heightFitScale * boostFactor, widthFitScale);
+        // Use height-based scale with boost, but cap by width to prevent overflow
+        let scale = Math.min(heightFitScale * boostFactor, widthFitScale);
 
         const destWidth = img.naturalWidth * scale;
         const destHeight = img.naturalHeight * scale;
