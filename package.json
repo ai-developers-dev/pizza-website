@@ -11,7 +11,10 @@
     "remotion:render": "remotion render remotion/index.ts PizzaSpin out/pizza-spin.mp4",
     "remotion:render-webm": "remotion render remotion/index.ts PizzaSpin out/pizza-spin.webm",
     "remotion:render-drop": "remotion render remotion/index.ts PizzaDrop out/pizza-drop.mp4",
-    "remotion:render-drop-webm": "remotion render remotion/index.ts PizzaDrop out/pizza-drop.webm"
+    "remotion:render-drop-webm": "remotion render remotion/index.ts PizzaDrop out/pizza-drop.webm",
+    "remotion:render-explode": "remotion render remotion/index.ts PizzaExplode out/pizza-explode.mp4",
+    "remotion:render-explode-webm": "remotion render remotion/index.ts PizzaExplode out/pizza-explode.webm",
+    "remotion:render-explode-4k": "remotion render remotion/index.ts PizzaExplode4K out/pizza-explode-4k.mp4"
   },
   "dependencies": {
     "@remotion/cli": "^4.0.407",
