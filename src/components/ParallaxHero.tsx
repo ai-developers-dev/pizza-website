@@ -104,20 +104,16 @@ const ParallaxHero: React.FC = () => {
         const availableWidth = canvasWidth * 1.0; // Minimal horizontal safety margin
 
         // 3. Calculate Adaptive Scale
-        // Use dynamic boost factor based on screen width
-        let boostFactor = 1.55; // Default for desktop
-        if (canvasWidth < 768) {
-          boostFactor = 1.15; // Mobile: keep it within bounds
-        } else if (canvasWidth < 1024) {
-          boostFactor = 1.30; // Tablet: intermediate scale
-        }
-
-        // We want it as big as possible (boosted width), BUT capped by height
+        // Use a "Safe Contain" strategy:
+        // We want the image large, but it MUST stay within the viewport width.
+        const maxSafeWidth = canvasWidth * 0.96; // 2% safety margin on each side
+        const widthFitScale = maxSafeWidth / img.naturalWidth;
         const heightFitScale = availableHeight / img.naturalHeight;
-        const widthBoostScale = (availableWidth * 2.0) / img.naturalWidth;
 
-        // Take the smaller of "Massive Width" or "Perfect Height" and apply boost
-        let scale = Math.min(heightFitScale, widthBoostScale) * boostFactor;
+        // We allow the image to grow 50% larger than its "perfect height fit" 
+        // for maximum impact, but we STRICTLY clamp it by the widthFitScale 
+        // so it can never be cut off horizontally.
+        let scale = Math.min(heightFitScale * 1.5, widthFitScale);
 
         const destWidth = img.naturalWidth * scale;
         const destHeight = img.naturalHeight * scale;
