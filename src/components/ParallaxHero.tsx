@@ -104,22 +104,23 @@ const ParallaxHero: React.FC = () => {
         const availableWidth = canvasWidth * 1.0; // Minimal horizontal safety margin
 
         // 3. Calculate Adaptive Scale
-        // Use a "Breakpoint-Aware Massive" strategy:
-        // We want the image MASSIVE on desktop, but safely contained on mobile.
-        const maxSafeWidth = canvasWidth * 0.98; // Minimal 1% safety margin on each side
+        // Use a "Width-First Maximum" strategy:
+        // We want the image to FILL the screen width, then check height.
+        const maxSafeWidth = canvasWidth * 0.98; // Just 1% margin on each side for max size
         const widthFitScale = maxSafeWidth / img.naturalWidth;
         const heightFitScale = availableHeight / img.naturalHeight;
 
-        // Dynamic boost based on viewport width
-        let boostFactor = 1.8; // Massive impact for desktop
+        // Dynamic boost based on viewport width - MAXIMUM aggressive
+        let boostFactor = 2.5; // MAXIMUM impact for desktop
         if (canvasWidth < 768) {
-          boostFactor = 1.3; // Manageable large size for mobile
+          boostFactor = 1.8; // Very strong size for mobile
         } else if (canvasWidth < 1024) {
-          boostFactor = 1.6; // Strong impact for tablet
+          boostFactor = 2.2; // MAXIMUM impact for tablet
         }
 
-        // Apply boost to the heightFit but STRICTLY cap by the absolute physical width
-        let scale = Math.min(heightFitScale * boostFactor, widthFitScale);
+        // Primary strategy: Use the WIDTH fit as the base, it ensures maximum size
+        // Secondary: Cap by height only if it would overflow vertically
+        let scale = Math.min(widthFitScale, heightFitScale * boostFactor);
 
         const destWidth = img.naturalWidth * scale;
         const destHeight = img.naturalHeight * scale;
@@ -127,9 +128,9 @@ const ParallaxHero: React.FC = () => {
         // Center horizontally
         const destX = (canvasWidth / 2) - (destWidth / 2);
 
-        // --- NEW POSITIONING LOGIC ---
         // --- REFINED POSITIONING ---
-        const upliftOffset = availableHeight * 0.35; // Increased uplift to 35%
+        // Center the pizza vertically with a moderate uplift so it overlaps the H1
+        const upliftOffset = availableHeight * 0.25; // Moderate uplift for H1 overlap
         let destY = (headerGap + (availableHeight / 2)) - (destHeight / 2) - upliftOffset;
 
         // Restore top clamping to protect the header
