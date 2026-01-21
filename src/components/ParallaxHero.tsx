@@ -29,6 +29,7 @@ const ParallaxHero: React.FC = () => {
   const frameIndex = useTransform(constrainedProgress, [0, 0.45, 0.85, 1], [1, 125, 1, 1]);
 
   // Quick fade out at the START of scroll to clear the way for the pizza
+  // Force full opacity if collapsed (reset state)
   const h1Opacity = useTransform(scrollYProgress, [0, 0.15], [1, 0]);
   const h1Scale = useTransform(scrollYProgress, [0, 0.15], [1, 0.8]);
   const h1Y = useTransform(scrollYProgress, [0, 0.15], [0, -100]);
@@ -90,10 +91,10 @@ const ParallaxHero: React.FC = () => {
         // Responsive scaling: Contain everything within viewport with margins
         const isMobile = (canvas.width / dpr) < 768;
 
-        // --- SAFE ZONE CALCULATION ---
-        // 1. Define guaranteed clearance for the header menu (Increased to push pizza down)
-        const headerGap = isMobile ? 120 : 160;
-        const bottomPadding = 20; // Reduced bottom padding slightly to give back some space
+        // --- ADAPTIVE SAFE ZONE CALCULATION ---
+        // 1. Define guaranteed clearance for header vs bottom
+        const headerGap = isMobile ? 85 : 110;
+        const bottomPadding = 40; // Dedicated space to ensure crust is visible
 
         // 2. Calculate available vertical space
         const canvasHeight = canvas.height / dpr;
@@ -101,14 +102,13 @@ const ParallaxHero: React.FC = () => {
         const availableHeight = canvasHeight - headerGap - bottomPadding;
         const availableWidth = canvasWidth * 0.95; // Horizontal safety margin
 
-        // 3. Calculate "Fit" scale (max size to fit safe zone without any clipping)
-        const fitHeightScale = availableHeight / img.naturalHeight;
-        const fitWidthScale = availableWidth / img.naturalWidth;
-        const baseFitScale = Math.min(fitHeightScale, fitWidthScale);
+        // 3. Calculate Adaptive Scale
+        // We want it as big as possible (boosted width), BUT capped by height
+        const heightFitScale = availableHeight / img.naturalHeight;
+        const widthBoostScale = (availableWidth * 1.7) / img.naturalWidth;
 
-        // 4. Apply "Big Pizza" boost (30% larger than a perfect fit)
-        // This keeps it massive while the centering logic keeps the top/bottom balanced
-        const scale = baseFitScale * 1.3;
+        // This is the key: we take the smaller of "Massive Width" or "Perfect Height"
+        const scale = Math.min(heightFitScale, widthBoostScale);
 
         const destWidth = img.naturalWidth * scale;
         const destHeight = img.naturalHeight * scale;
@@ -116,9 +116,14 @@ const ParallaxHero: React.FC = () => {
         // Center horizontally
         const destX = (canvasWidth / 2) - (destWidth / 2);
 
-        // Center vertically WITHIN the safe space (between header gap and bottom padding)
+        // Center vertically in the safe zone
         const safeCenterY = headerGap + (availableHeight / 2);
-        const destY = safeCenterY - (destHeight / 2);
+        let destY = safeCenterY - (destHeight / 2);
+
+        // Clamping to protect the header
+        if (destY < headerGap) {
+          destY = headerGap;
+        }
 
         context.drawImage(
           img,
