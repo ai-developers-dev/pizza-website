@@ -104,21 +104,22 @@ const ParallaxHero: React.FC = () => {
         const availableWidth = canvasWidth * 1.0; // Minimal horizontal safety margin
 
         // 3. Calculate Adaptive Scale
-        // Use an "Edge-Bleed Maximum" strategy:
-        // We prioritize HEIGHT to make the pizza as LARGE as possible.
-        // The canvas will clip any overflow, giving an "edge-to-edge" feel.
+        // Use a "Balanced Maximum" strategy:
+        // Large but contained within viewport width
+        const maxSafeWidth = canvasWidth * 1.0; // Full width - allow edge-to-edge
+        const widthFitScale = maxSafeWidth / img.naturalWidth;
         const heightFitScale = availableHeight / img.naturalHeight;
 
-        // Dynamic boost based on viewport width - EXTREME aggressive
-        let boostFactor = 3.0; // EXTREME impact for desktop - pizza will dominate
+        // Dynamic boost based on viewport width - MAXIMUM IMPACT
+        let boostFactor = 2.5; // Maximum impact for desktop
         if (canvasWidth < 768) {
-          boostFactor = 2.5; // EXTREME size for mobile - let it bleed off edges
+          boostFactor = 2.0; // Large size for mobile
         } else if (canvasWidth < 1024) {
-          boostFactor = 2.8; // EXTREME impact for tablet
+          boostFactor = 2.2; // Strong impact for tablet
         }
 
-        // Use height-based scale with aggressive boost - allow edge bleeding
-        let scale = heightFitScale * boostFactor;
+        // Use height-based scale with boost, but cap by width to prevent overflow
+        let scale = Math.min(heightFitScale * boostFactor, widthFitScale);
 
         const destWidth = img.naturalWidth * scale;
         const destHeight = img.naturalHeight * scale;
@@ -126,14 +127,21 @@ const ParallaxHero: React.FC = () => {
         // Center horizontally
         const destX = (canvasWidth / 2) - (destWidth / 2);
 
-        // --- REFINED POSITIONING ---
+        // --- RESPONSIVE POSITIONING ---
         // Position the pizza to overlap with the H1 text in the center
-        // The pizza should be centered vertically but shifted up to overlap the text
-        const upliftOffset = availableHeight * 0.45; // Strong uplift to reach the H1
+        // Responsive uplift - less on mobile to keep pizza vertically centered
+        let upliftOffset = availableHeight * 0.35; // Desktop default
+        if (canvasWidth < 768) {
+          upliftOffset = availableHeight * 0.05; // Mobile - keep centered lower
+        } else if (canvasWidth < 1024) {
+          upliftOffset = availableHeight * 0.28; // Tablet middle ground
+        }
         let destY = (headerGap + (availableHeight / 2)) - (destHeight / 2) - upliftOffset;
 
-        // Allow the pizza to go above the header gap for maximum impact
-        // (It will be clipped by the canvas anyway)
+        // Clamp to header gap to prevent going too high
+        if (destY < headerGap) {
+          destY = headerGap;
+        }
 
         context.drawImage(
           img,
@@ -224,9 +232,14 @@ const ParallaxHero: React.FC = () => {
               scale: h1Scale,
               y: h1Y
             }}
-            className="text-center z-10"
+            className="text-center z-20"
           >
-            <h1 className="text-[clamp(4rem,15vw,12rem)] leading-[0.85] font-black text-primary tracking-tighter uppercase drop-shadow-sm flex flex-col items-center">
+            <h1
+              className="text-[clamp(4rem,15vw,12rem)] leading-[0.85] font-black text-primary tracking-tighter uppercase flex flex-col items-center"
+              style={{
+                textShadow: '0 2px 8px rgba(255,255,255,0.9), 0 4px 20px rgba(255,255,255,0.7)'
+              }}
+            >
               <motion.span
                 initial={{ x: -120, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
