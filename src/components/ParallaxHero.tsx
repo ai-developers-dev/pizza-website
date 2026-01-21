@@ -112,10 +112,12 @@ const ParallaxHero: React.FC = () => {
 
         // Dynamic boost based on viewport width - MAXIMUM IMPACT
         let boostFactor = 2.5; // Maximum impact for desktop
-        if (canvasWidth < 768) {
-          boostFactor = 2.0; // Large size for mobile
+        if (canvasWidth < 480) {
+          boostFactor = 3.2; // Extra large for small phones
+        } else if (canvasWidth < 768) {
+          boostFactor = 2.8; // Large size for mobile
         } else if (canvasWidth < 1024) {
-          boostFactor = 2.2; // Strong impact for tablet
+          boostFactor = 2.4; // Strong impact for tablet
         }
 
         // Use height-based scale with boost, but cap by width to prevent overflow
