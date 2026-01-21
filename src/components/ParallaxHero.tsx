@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { useScroll, useTransform, motion, useMotionValueEvent, useMotionValue } from 'framer-motion';
+import { Pizza } from 'lucide-react';
 
 const FRAME_COUNT = 192;
 
@@ -45,7 +46,7 @@ const ParallaxHero: React.FC = () => {
 
       for (let i = 1; i <= FRAME_COUNT; i++) {
         const img = new Image();
-        img.src = `/images/deluxe-pizza-no-background/frame_${i}.png`;
+        img.src = `/images/pepperoni-pizza-no-background/frame_${i}.png`;
 
         const handleLoad = () => {
           // Store the image directly without any processing
@@ -93,22 +94,30 @@ const ParallaxHero: React.FC = () => {
 
         // --- ADAPTIVE SAFE ZONE CALCULATION ---
         // 1. Define guaranteed clearance for header vs bottom
-        const headerGap = isMobile ? 85 : 110;
-        const bottomPadding = 40; // Dedicated space to ensure crust is visible
+        const headerGap = isMobile ? 20 : 40; // Reduced clearance
+        const bottomPadding = 10; // Minimal space at bottom
 
         // 2. Calculate available vertical space
         const canvasHeight = canvas.height / dpr;
         const canvasWidth = canvas.width / dpr;
         const availableHeight = canvasHeight - headerGap - bottomPadding;
-        const availableWidth = canvasWidth * 0.95; // Horizontal safety margin
+        const availableWidth = canvasWidth * 1.0; // Minimal horizontal safety margin
 
         // 3. Calculate Adaptive Scale
+        // Use dynamic boost factor based on screen width
+        let boostFactor = 1.55; // Default for desktop
+        if (canvasWidth < 768) {
+          boostFactor = 1.15; // Mobile: keep it within bounds
+        } else if (canvasWidth < 1024) {
+          boostFactor = 1.30; // Tablet: intermediate scale
+        }
+
         // We want it as big as possible (boosted width), BUT capped by height
         const heightFitScale = availableHeight / img.naturalHeight;
-        const widthBoostScale = (availableWidth * 1.7) / img.naturalWidth;
+        const widthBoostScale = (availableWidth * 2.0) / img.naturalWidth;
 
-        // This is the key: we take the smaller of "Massive Width" or "Perfect Height"
-        const scale = Math.min(heightFitScale, widthBoostScale);
+        // Take the smaller of "Massive Width" or "Perfect Height" and apply boost
+        let scale = Math.min(heightFitScale, widthBoostScale) * boostFactor;
 
         const destWidth = img.naturalWidth * scale;
         const destHeight = img.naturalHeight * scale;
@@ -116,11 +125,12 @@ const ParallaxHero: React.FC = () => {
         // Center horizontally
         const destX = (canvasWidth / 2) - (destWidth / 2);
 
-        // Center vertically in the safe zone
-        const safeCenterY = headerGap + (availableHeight / 2);
-        let destY = safeCenterY - (destHeight / 2);
+        // --- NEW POSITIONING LOGIC ---
+        // --- REFINED POSITIONING ---
+        const upliftOffset = availableHeight * 0.35; // Increased uplift to 35%
+        let destY = (headerGap + (availableHeight / 2)) - (destHeight / 2) - upliftOffset;
 
-        // Clamping to protect the header
+        // Restore top clamping to protect the header
         if (destY < headerGap) {
           destY = headerGap;
         }
@@ -188,12 +198,13 @@ const ParallaxHero: React.FC = () => {
         {/* Loading State */}
         {!isLoaded && (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-white z-50">
-            <div className="relative w-24 h-24 mb-6">
-              <img
-                src="/images/pizza-slice.png"
-                alt="Loading..."
-                className="w-full h-full object-contain animate-spin-slow"
-              />
+            <div className="relative w-24 h-24 mb-6 flex items-center justify-center">
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+              >
+                <Pizza size={64} className="text-primary" />
+              </motion.div>
             </div>
             <p className="text-dark/50 font-medium tracking-wide">Preheating the oven...</p>
           </div>
