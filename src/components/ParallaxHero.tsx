@@ -143,6 +143,12 @@ const ParallaxHero: React.FC = () => {
           destY = headerGap;
         }
 
+        // Clamp to prevent bottom from being cut off
+        const maxDestY = canvasHeight - destHeight - bottomPadding;
+        if (destY > maxDestY) {
+          destY = maxDestY;
+        }
+
         context.drawImage(
           img,
           destX,

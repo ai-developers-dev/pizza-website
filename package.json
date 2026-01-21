@@ -6,14 +6,23 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "remotion:studio": "remotion studio remotion/index.ts",
+    "remotion:render": "remotion render remotion/index.ts PizzaSpin out/pizza-spin.mp4",
+    "remotion:render-webm": "remotion render remotion/index.ts PizzaSpin out/pizza-spin.webm",
+    "remotion:render-drop": "remotion render remotion/index.ts PizzaDrop out/pizza-drop.mp4",
+    "remotion:render-drop-webm": "remotion render remotion/index.ts PizzaDrop out/pizza-drop.webm"
   },
   "dependencies": {
+    "@remotion/cli": "^4.0.407",
+    "@remotion/player": "^4.0.407",
+    "@remotion/renderer": "^4.0.407",
     "framer-motion": "^12.27.5",
     "lucide-react": "^0.562.0",
     "next": "16.1.4",
     "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react-dom": "19.2.3",
+    "remotion": "^4.0.407"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
